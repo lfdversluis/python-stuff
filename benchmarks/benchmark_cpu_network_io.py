@@ -112,10 +112,16 @@ class ClientServerSimulation():
     def parse_body(self, body):
         # print "parsing body"
         # Deflate the zip - CPU intensive
-        in_memory_zip = StringIO.StringIO(body)
-        zf = zipfile.ZipFile(in_memory_zip, 'r')
-        data = zf.open("data.json").read()
-        return data
+        def unzip(body):
+            in_memory_zip = StringIO.StringIO(body)
+            zf = zipfile.ZipFile(in_memory_zip, 'r')
+            data = zf.open("data.json").read()
+            return data
+
+        if self.cpu_blocking:
+            return succeed(unzip(body))
+        else:
+            return deferToThread(unzip, body)
 
     def parse_data(self, data):
 

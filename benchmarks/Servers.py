@@ -147,7 +147,7 @@ class ZipRequestHandler(resource.Resource):
             zip_data.seek(0)
             return zip_data.read()
 
-        if self.blocking:
+        if self.cpu_blocking:
             return succeed(construct_zip(data))
         else:
             return deferToThread(construct_zip, data)
