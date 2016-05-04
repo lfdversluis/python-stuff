@@ -1,5 +1,5 @@
 pdf("plot_latency_benchmark.pdf")
-plot(1, xlim=c(0L, 400L), ylim=c(0L, 98439L), type = "l", xlab = "# Calls", ylab = "Latency (milliseconds)", main = "Latency benchmark")
+plot(1, xlim=c(0L, 400L), ylim=c(0L, 98439L), type = "l", xlab = "Call", ylab = "Latency (milliseconds)", main = "Latency benchmark")
 lines(1:400, c(245L, 372L, 499L, 626L, 752L, 879L, 1005L, 1132L, 1259L, 1386L, 
 1513L, 1650L, 1794L, 1939L, 2083L, 2227L, 2371L, 2516L, 2660L, 
 2805L, 2949L, 3093L, 3238L, 3382L, 3526L, 3671L, 3815L, 3959L, 

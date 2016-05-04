@@ -1,4 +1,7 @@
-import StringIO
+try:
+    from cStringIO import StringIO
+except ImportError:
+    from io import BytesIO as StringIO
 import itertools
 import json
 import math
@@ -113,8 +116,8 @@ class ClientServerSimulation():
         # print "parsing body"
         # Deflate the zip - CPU intensive
         def unzip(body):
-            in_memory_zip = StringIO.StringIO(body)
-            zf = zipfile.ZipFile(in_memory_zip, 'r')
+            in_memory_zip = StringIO(body)
+            zf = zipfile.ZipFile(in_memory_zip, 'r', zipfile.ZIP_DEFLATED, True)
             data = zf.open("data.json").read()
             return data
 
@@ -182,6 +185,8 @@ def setup_experiment():
     for item in iter:
         confs.append(item)
 
+    # confs = confs[6:]
+
     def run_next(_):
         if len(confs) > 0:
             conf = confs.pop()
@@ -191,8 +196,8 @@ def setup_experiment():
             # for p in execute(shlex.split(cmd)):
             #     print p
             p = subprocess.Popen(shlex.split(cmd), stdout=subprocess.PIPE)
-            print "waiting 120 sec for the servers to fire up"
-            time.sleep(120)
+            print "waiting 90 sec for the servers to fire up"
+            time.sleep(90)
             print "starting benchmark"
             b = Benchmark(conf)
             b.prepare_experiment()

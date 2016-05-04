@@ -1,4 +1,7 @@
-import StringIO
+try:
+    from cStringIO import StringIO
+except ImportError:
+    from io import BytesIO as StringIO
 import json
 import os
 import sqlite3
@@ -140,12 +143,13 @@ class ZipRequestHandler(resource.Resource):
         """
 
         def construct_zip(data):
-            zip_data = StringIO.StringIO()
-            zipFile = zipfile.ZipFile(zip_data, 'w')
+            zip_data = StringIO()
+            zipFile = zipfile.ZipFile(zip_data, "a", zipfile.ZIP_DEFLATED, True)
             zipFile.writestr('data.json', data)
             zipFile.close()
-            zip_data.seek(0)
-            return zip_data.read()
+            zipped_data = zip_data.getvalue()
+            zip_data.close()
+            return zipped_data
 
         if self.cpu_blocking:
             return succeed(construct_zip(data))
