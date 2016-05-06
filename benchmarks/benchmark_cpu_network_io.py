@@ -180,6 +180,9 @@ def execute(command):
 
 
 def setup_experiment():
+    with open("../data/benchmark_cpu_network_io.txt", "w") as data_file:
+        data_file.close()
+
     iter = itertools.product((True, False), repeat=3)  # (cpu, network, io)
     confs = []
     for item in iter:

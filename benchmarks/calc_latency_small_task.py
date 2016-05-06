@@ -23,8 +23,8 @@ class LatencyBenchmarkDataParser:
         self.lines_blocking = []
         self.lines_async = []
 
-        self.colors = ["red", "blue", "green", "orange", "black"]
-        self.pchs = ["0", "1", "2", "3", "4"]
+        self.colors = ["red", "grey", "green", "orange", "black", "purple"]
+        self.pchs = [0, 1, 2, 3, 4, 5]
 
         index = 0
         self.color_delay_comb = []
@@ -36,6 +36,11 @@ class LatencyBenchmarkDataParser:
                 calls = parts[3]
                 delay = parts[4]
 
+                if calls != "500":
+                    continue
+
+                print self.colors[index]
+
                 if type == "blocking":
                     self.color_delay_comb.append((float(delay), self.colors[index]))
                     # Do the call myself since I want to group them on index
@@ -43,8 +48,8 @@ class LatencyBenchmarkDataParser:
                                 type, index)
                     self.parse_files("latencybenchmark_made_%s_%s_%s" % ("async", calls, delay), "latencybenchmark_done_%s_%s_%s" % ("async", calls, delay),
                                 "async", index)
-                index += 1
-                index = index % len (self.colors)
+                    index += 1
+                    index = index % len (self.colors)
 
         x_lim = [0, self.x_max]
         y_lim = [0, self.y_max]
@@ -81,7 +86,7 @@ class LatencyBenchmarkDataParser:
 
         for line in made_file.readlines():
             parts = line.split(" ")
-            blocking_start[int(parts[0])] = (int(float(parts[1])), int(parts[2]))
+            blocking_start[int(parts[0])] = (int(float(parts[1])), int(parts[2])) # number : (delay, time)
 
         for line in done_file.readlines():
             parts = line.split(" ")
@@ -103,12 +108,17 @@ class LatencyBenchmarkDataParser:
         self.x_max = max(self.x_max, max(x_vals))
         self.y_max = max(self.y_max, max(y_vals))
 
+        # print self.colors[index]
+
+        # Make 1 in every 50 elements be an actual marker.
+        points = robjects.IntVector([self.pchs[index]] + [26] * 49).r_repr()
+
         if type == "blocking":
-            self.lines_blocking.append("lines(%s, %s, type = \"l\", col=\"%s\", pch=%s, lty=1)\n" %
-                                       (robjects.IntVector(x_vals).r_repr(), robjects.IntVector(y_vals).r_repr(), self.colors[index], self.pchs[index]))
+            self.lines_blocking.append("lines(%s, %s, type = \"o\", col=\"%s\", pch=%s, lty=1, cex=1)\n" %
+                                       (robjects.IntVector(x_vals).r_repr(), robjects.IntVector(y_vals).r_repr(), self.colors[index], points))
         else:
-            self.lines_async.append("lines(%s, %s, type = \"l\", col=\"%s\", pch=%s, lty=2)\n" %
-                                       (robjects.IntVector(x_vals).r_repr(), robjects.IntVector(y_vals).r_repr(), self.colors[index], self.pchs[index]))
+            self.lines_async.append("lines(%s, %s, type = \"o\", col=\"%s\", pch=%s, lty=2, cex=1)\n" %
+                                       (robjects.IntVector(x_vals).r_repr(), robjects.IntVector(y_vals).r_repr(), self.colors[index], points))
 
 
 if __name__ == "__main__":

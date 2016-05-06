@@ -25,8 +25,7 @@ class Benchmark:
 
     @inlineCallbacks
     def run(self):
-        # delay = [0.01, 0.02, 0.04, 0.08, 0.1]
-        delay = [0.01, 0.02, 0.03, 0.05, 0.1]
+        delay = [0.01, 0.02, 0.03, 0.05, 0.1, 0.2]
         for d in delay:
             yield self.query_time(d, True) # One run with blocking code
             yield self.query_time(d, False) # and one without.
@@ -45,7 +44,7 @@ class Benchmark:
     @inlineCallbacks
     def query_time(self, call_delay, blocking):
         print "Starting %s with delay %s" % ("blocking" if blocking else "async", str(call_delay))
-        calls = 400  # amount of calls
+        calls = 500  # amount of calls
 
         # make sure the threadpool is initialized by doing a bogus call
         yield self.nice_query(0, blocking)
