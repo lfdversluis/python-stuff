@@ -90,7 +90,7 @@ class ClientServerSimulation():
 
     def run_requests(self):
         parametered_url = self.url + ("?i=" + str(self.count % 10))
-        for i in range(NUM_REQUESTS):
+        for i in xrange(NUM_REQUESTS):
             if self.net_blocking:
                 r = requests.get(parametered_url, timeout=3600)
                 # data = self.parse_body(r.text)

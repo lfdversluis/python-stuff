@@ -100,7 +100,7 @@ class ZipRequestHandler(resource.Resource):
 
         def generate_json(data):
             number_list = []
-            for i in range(len(data)):
+            for i in xrange(len(data)):
                 number_dict = {"squared": data[i][0],
                                "cubed": data[i][1]}
                 number_list.append(number_dict)
@@ -158,7 +158,7 @@ class ZipRequestHandler(resource.Resource):
 
 
 def start_servers(num_servers, io_blocking, cpu_blocking):
-    for i in range(num_servers):
+    for i in xrange(num_servers):
         s = Server(i, io_blocking, cpu_blocking)
         print s.create_server(s.INITIAL_PORT + i)
 
