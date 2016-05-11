@@ -1,14 +1,10 @@
 import gzip
-from cStringIO import StringIO
-from io import BytesIO
-
 import json
 import os
 import sqlite3
 import sys
-import zipfile
+from io import BytesIO
 
-import time
 from twisted.internet import reactor
 from twisted.internet.defer import succeed
 from twisted.internet.endpoints import TCP4ServerEndpoint

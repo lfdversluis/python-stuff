@@ -1,6 +1,4 @@
 import gzip
-from cStringIO import StringIO
-from io import BytesIO
 import itertools
 import json
 import math
@@ -10,9 +8,8 @@ import shlex
 import sqlite3
 import subprocess
 import time
-import zipfile
+from io import BytesIO
 
-from six import text_type
 from twisted.internet import reactor
 from twisted.internet.defer import DeferredList, CancelledError, Deferred, setDebugging, gatherResults, \
     succeed
@@ -95,7 +92,7 @@ class ClientServerSimulation():
                 r = requests.get(parametered_url, timeout=3600)
                 # data = self.parse_body(r.text)
                 # self.parse_data(data)
-                self.deferreds.append(self.parse_body(r.text).addCallbacks(self.parse_data, self.on_error).addCallbacks(self.insert_ins_values, self.on_error))
+                self.deferreds.append(self.parse_body(r.content).addCallbacks(self.parse_data, self.on_error).addCallbacks(self.insert_ins_values, self.on_error))
             else:
                 agent = Agent(reactor, connectTimeout=3600)
                 request = agent.request('GET', parametered_url)
@@ -113,9 +110,7 @@ class ClientServerSimulation():
         return readBody(response)
 
     def parse_body(self, body):
-        # print "parsing body"
         # Deflate the zip - CPU intensive
-        print type(body)
         def unzip(body):
             in_memory_zip = BytesIO(body)
             g = gzip.GzipFile(fileobj=in_memory_zip, mode='rb')
