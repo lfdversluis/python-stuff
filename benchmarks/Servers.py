@@ -1,13 +1,14 @@
-try:
-    from cStringIO import StringIO
-except ImportError:
-    from io import BytesIO as StringIO
+import gzip
+from cStringIO import StringIO
+from io import BytesIO
+
 import json
 import os
 import sqlite3
 import sys
 import zipfile
 
+import time
 from twisted.internet import reactor
 from twisted.internet.defer import succeed
 from twisted.internet.endpoints import TCP4ServerEndpoint
@@ -143,11 +144,15 @@ class ZipRequestHandler(resource.Resource):
         """
 
         def construct_zip(data):
-            zip_data = StringIO()
-            zipFile = zipfile.ZipFile(zip_data, "a", zipfile.ZIP_DEFLATED, True)
-            zipFile.writestr('data.json', data)
-            zipFile.close()
-            zipped_data = zip_data.getvalue()
+            zip_data = BytesIO()
+            g = gzip.GzipFile(fileobj=zip_data, mode='wb')
+            g.write(data)
+            g.close()
+            # zipFile = zipfile.ZipFile(zip_data, "a", zipfile.ZIP_STORED, True)
+            # zipFile.writestr('data.json', data)
+            # zipFile.close()
+            zip_data.seek(0)
+            zipped_data = zip_data.read()
             zip_data.close()
             return zipped_data
 

@@ -51,6 +51,7 @@ plt.xticks(x + 0.5, x_labels)
 
 # Set the bar colors and hatches
 for i in range(len(colors)):
+    print i
     barlist[i].set_hatch(hatches[i])
     barlist[i].set_color(colors[i])
     barlist[i].set_edgecolor("black")

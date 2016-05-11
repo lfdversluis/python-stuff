@@ -1,7 +1,6 @@
-try:
-    from cStringIO import StringIO
-except ImportError:
-    from io import BytesIO as StringIO
+import gzip
+from cStringIO import StringIO
+from io import BytesIO
 import itertools
 import json
 import math
@@ -13,6 +12,7 @@ import subprocess
 import time
 import zipfile
 
+from six import text_type
 from twisted.internet import reactor
 from twisted.internet.defer import DeferredList, CancelledError, Deferred, setDebugging, gatherResults, \
     succeed
@@ -115,10 +115,15 @@ class ClientServerSimulation():
     def parse_body(self, body):
         # print "parsing body"
         # Deflate the zip - CPU intensive
+        print type(body)
         def unzip(body):
-            in_memory_zip = StringIO(body)
-            zf = zipfile.ZipFile(in_memory_zip, 'r', zipfile.ZIP_DEFLATED, True)
-            data = zf.open("data.json").read()
+            in_memory_zip = BytesIO(body)
+            g = gzip.GzipFile(fileobj=in_memory_zip, mode='rb')
+            data = g.read()
+            g.close()
+            in_memory_zip.close()
+            # zf = zipfile.ZipFile(in_memory_zip, 'r', zipfile.ZIP_STORED, True)
+            # data = zf.open("data.json").read()
             return data
 
         if self.cpu_blocking:
